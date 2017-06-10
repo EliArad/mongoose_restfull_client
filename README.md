@@ -4,6 +4,10 @@ that uses openssl and submit json to server
 In order to use that client, download the full mongoose web server, overwrite the restfull client
 example and run mame
 
+There is also a example_k70.mk
+for embedded linux k70 chip (nxp)
+used in emcraft BSP
+
 # Mongoose - Embedded Web Server / Embedded Networking Library
 
 ![](https://img.shields.io/badge/license-GPL_2-green.svg "License")
