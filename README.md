@@ -1,3 +1,9 @@
+I added only my part of the restfull client 
+that uses openssl and submit json to server
+
+In order to use that client, download the full mongoose web server, overwrite the restfull client
+example and run mame
+
 # Mongoose - Embedded Web Server / Embedded Networking Library
 
 ![](https://img.shields.io/badge/license-GPL_2-green.svg "License")
