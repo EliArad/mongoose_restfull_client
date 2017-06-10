@@ -1,0 +1,137 @@
+//###############################
+// ACUTE STATUS & DATA
+//###############################
+
+//All endpoints are authenticated by HTTP HEADER access-token which is set to the value
+//  <=== This will be inputted maually for the demo purposes
+//obtained during the setup
+
+//The cloud_msg_number is the running one-directional id counter of messages from the cloud to the app.
+//First message will have cloud_msg_number of 1
+
+//The app_msg_number is the running one-directional id counter of messages from the app to the cloud.
+//First message will have app_msg_number of 1
+
+//rex_msg_number is the running bi-directional id counter between the App and the Rex device.
+//This value can be null when the message is generated in the app and directed to the cloud.
+//Or it can be also null when the message is generated in the cloud
+
+/*Transport layer
+The data in the stream is transported in packets. Everything is in ASCII encoding. Standard CRC16 – CCITT algorithm will
+be used to assure message contains no transmission errors. Each packet consists of a header that contains packet metainformation,
+a data block, and a checksum. Fields in the header are separated by commas; header and data and checksum are separated by newlines.
+There is a newline after the checksum as the last character of a message. Please see example if anything is unclear.
+The fields in each packet are organised as follows:
+1.Header:
+  a. Transmitting local timestamp (YYYYmmDDTHHMMSS)
+  b. Source (CLOUD, ACUTE)
+  c. Destination (CLOUD, ACUTE)
+  d. Message id (1 to 10 digits suppressing leading zeros, then restarts. Message id is also restarted after each successful setup. It is not expected to overflow the 10 digits within one therapy)
+  e. Length of data (excluding header and newlines) (1 to  4 digits suppressing leading zeros)
+2.Data block (as defined in the Application layer)
+3.CRC including header, newline separator and data; not containing the newline after data block. Sent in hex representation (2B = 4 characters, ex. 4BA4)
+*/
+
+/*Destination will respond with an ACK/NACK code as follows
+1.Header
+a.Transmitting local timestamp (YYYYmmDDTHHMMSS)
+b.Source (CLOUD, APP, REX)
+c.Destination (CLOUD, APP, REX)
+d.Message id of related packet (same as transmitted above)
+e.Length of data (excluding header)
+2.Ack/Nack
+a.Ack (AA)
+b.Nack General (NG)
+c.Nack CRC (NC)
+d.Nack Length (NL)
+e.Nack data format error (ND)
+3.CRC including header and data as above
+  */
+
+//Setup
+//POST /api/v1/acute/setup
+//Request:
+{
+  "device": {
+    "version": "0.5.0",
+    "serial_number": "abcdef-12354654",
+    "timezone": "Europe/Prague"
+  },
+  "patient_identifier": "123",
+  "site": {
+    "name": "Hospital NY",
+    "ward": "Left wing"
+  },
+  "regime": {
+    "Drug Group Identify": "Ox10",
+    "Drag Name": "Oxygesic",
+    "Dosage": "10mg",
+    "Pills per full blister": "10 pills",
+    "Patient Lockout": "4:00",
+    "Patient Max 8h": "3 pills",
+    "Nurse Lockout": "2:00",
+    "Murs Max 8h": "4 pills"
+  },
+  "state": "active"
+}
+//Response (200 OK):
+{
+  "status" {
+    "respond display":"Successful connection",
+    "access_token": "acme-abc454-468787-4545-as4dsds"
+  }
+}
+
+//Possible error codes
+// BAD_DEVICE_SERIAL_NUMBER
+//
+
+
+//TODO (VRATA) add error response
+
+
+//THIS IS A DEVICE TO CLOUD CHANNEL
+// Send
+// POST /api/v1/app/data
+// REQUEST:
+{
+  "messages": [
+    {
+      "msg_type": "MAINTANANCE",
+      "Status": {
+        "battery": "good",
+        "voltage in": "9v",
+        "malfunction": "door"
+      }
+    }
+  ]
+}
+
+{
+  "messages": [
+    {
+      "msg_type": "Therapy Event",
+      "event": {      //options in message
+        "Therapy Start": "DD,MM,YY,HH,MM",
+        "pill intake time": "DD,MM,YY,HH,MM",
+        "Extra Pill intake": "DD,MM,YY,HH,MM",
+        "Pill request": "DD,MM,YY,HH,MM",
+        "Pain rating": "1-10",
+        "wristband replace": "DD,MM,YY,HH,MM",
+        "blister exchange": "DD,MM,YY,HH,MM",
+        "Therapy End": "DD,MM,YY,HH,MM"
+      }
+        "regime exchange": {
+        "Drug Group Identify": "Ox10",
+        "Drag Name": "Oxygesic",
+        "Dosage": "10mg",
+        "Pills per full blister": "10 pills",
+        "Patient Lockout": "4:00",
+        "Patient Max 8h": "3 pills",
+        "Nurse Lockout": "2:00",
+        "Murs Max 8h": "4 pills"
+      },
+    }
+  ]
+}
+
